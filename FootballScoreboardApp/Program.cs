@@ -1,4 +1,5 @@
 ﻿using ConsoleTables;
+using FootballScoreboardApp.DataStructure;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net;
@@ -35,13 +36,13 @@ namespace FootballScoreboardApp
                     switch (choice)
                     {
                         case 1:
-                            GetNFLScores();
+                            ShowScores(Urls.NFL);
                             break;
                         case 2:
-                            GetNBAScores();
+                            ShowScores(Urls.NBA);
                             break;
                         case 3:
-                            GetLaLigaScores();
+                            ShowScores(Urls.LALIGA);
                             break;
                         case 4:
                             Exit();
@@ -64,106 +65,10 @@ namespace FootballScoreboardApp
             } while (true);
         }
 
-        public static void GetNFLScores()
+        public static void ShowScores(string url)
         {
-            ///// How to access a JSON file from an API endpoint/////
-            WebClient client = new WebClient();
-            string urlPath = client.DownloadString("https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard");
-
-            dynamic dynamicObj = JsonConvert.DeserializeObject<dynamic>(urlPath);
-
-            var events = dynamicObj["events"] as JArray;
-
-            var table = new ConsoleTable("Status", "Time", "Matchup", "Broadcast", "Score", "Moneyline", "Venue");
-            foreach (var item in events)
-            {
-                var shortName = item["shortName"]?.ToString();
-                var time = (DateTime)item["competitions"]?[0]["date"];
-                DateTime dateTime = TimeZoneInfo.ConvertTimeToUtc(time);
-
-                var broadcast = item["competitions"]?[0]?["broadcasts"]?.FirstOrDefault()?["names"]?.FirstOrDefault()?.ToString() ?? "N/A";
-                var moneyline = item["competitions"]?[0]?["odds"]?.FirstOrDefault()?["details"]?.ToString() ?? "N/A";
-                var gameStatus = item["competitions"][0]["status"]["type"]["description"]?.ToString();
-
-                var awayScore = item["competitions"]?[0]?["competitors"]?.FirstOrDefault(c => c["homeAway"]?.ToString() == "away")?["score"]?.ToString() ?? "0";
-                var homeScore = item["competitions"]?[0]?["competitors"]?.FirstOrDefault(c => c["homeAway"]?.ToString() == "home")?["score"]?.ToString() ?? "0";
-                var scoreDisplay = $"{awayScore} - {homeScore}";
-
-                var venue = item["competitions"]?[0]?["venue"]?["fullName"]?.ToString() ?? "N/A";
-
-                table.AddRow(gameStatus, time, shortName, broadcast, scoreDisplay, moneyline, venue);
-            }
-            table.Write();
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write("Press enter to return to the main menu...");
-            Console.ForegroundColor = ConsoleColor.Gray;
-            Console.ReadLine();
-        }
-        public static void GetNBAScores()
-        {
-            ///// How to access a JSON file from an API endpoint/////
-            WebClient client = new WebClient();
-            string urlPath = client.DownloadString("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard");
-
-            dynamic dynamicObj = JsonConvert.DeserializeObject<dynamic>(urlPath);
-
-            var events = dynamicObj["events"] as JArray;
-
-            var table = new ConsoleTable("Status", "Time", "Matchup", "Broadcast", "Score", "Moneyline", "Venue");
-            foreach (var item in events)
-            {
-                var shortName = item["shortName"]?.ToString();
-                var time = (DateTime)item["competitions"]?[0]["date"];
-                DateTime dateTime = TimeZoneInfo.ConvertTimeToUtc(time);
-
-                var broadcast = item["competitions"]?[0]?["broadcasts"]?.FirstOrDefault()?["names"]?.FirstOrDefault()?.ToString() ?? "N/A";
-                var moneyline = item["competitions"]?[0]?["odds"]?.FirstOrDefault()?["details"]?.ToString() ?? "N/A";
-                var gameStatus = item["competitions"][0]["status"]["type"]["description"]?.ToString();
-
-                var awayScore = item["competitions"]?[0]?["competitors"]?.FirstOrDefault(c => c["homeAway"]?.ToString() == "away")?["score"]?.ToString() ?? "0";
-                var homeScore = item["competitions"]?[0]?["competitors"]?.FirstOrDefault(c => c["homeAway"]?.ToString() == "home")?["score"]?.ToString() ?? "0";
-                var scoreDisplay = $"{awayScore} - {homeScore}";
-
-                var venue = item["competitions"]?[0]?["venue"]?["fullName"]?.ToString() ?? "N/A";
-
-                table.AddRow(gameStatus, time, shortName, broadcast, scoreDisplay, moneyline, venue);
-            }
-            table.Write();
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write("Press enter to return to the main menu...");
-            Console.ForegroundColor = ConsoleColor.Gray;
-            Console.ReadLine();
-        }
-        public static void GetLaLigaScores()
-        {
-            ///// How to access a JSON file from an API endpoint/////
-            WebClient client = new WebClient();
-            string urlPath = client.DownloadString("https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard");
-
-            dynamic dynamicObj = JsonConvert.DeserializeObject<dynamic>(urlPath);
-
-            var events = dynamicObj["events"] as JArray;
-
-            var table = new ConsoleTable("Status", "Time", "Matchup", "Broadcast", "Score", "Moneyline", "Venue");
-            foreach (var item in events)
-            {
-                var shortName = item["shortName"]?.ToString();
-                var time = (DateTime)item["competitions"]?[0]["date"];
-                DateTime dateTime = TimeZoneInfo.ConvertTimeToUtc(time);
-
-                var broadcast = item["competitions"]?[0]?["broadcasts"]?.FirstOrDefault()?["names"]?.FirstOrDefault()?.ToString() ?? "N/A";
-                var moneyline = item["competitions"]?[0]?["odds"]?.FirstOrDefault()?["details"]?.ToString() ?? "N/A";
-                var gameStatus = item["competitions"][0]["status"]["type"]["description"]?.ToString();
-
-                var awayScore = item["competitions"]?[0]?["competitors"]?.FirstOrDefault(c => c["homeAway"]?.ToString() == "away")?["score"]?.ToString() ?? "0";
-                var homeScore = item["competitions"]?[0]?["competitors"]?.FirstOrDefault(c => c["homeAway"]?.ToString() == "home")?["score"]?.ToString() ?? "0";
-                var scoreDisplay = $"{awayScore} - {homeScore}";
-
-                var venue = item["competitions"]?[0]?["venue"]?["fullName"]?.ToString() ?? "N/A";
-
-                table.AddRow(gameStatus, time, shortName, broadcast, scoreDisplay, moneyline, venue);
-            }
-            table.Write();
+            API.GetScores(url);
+            
             Console.ForegroundColor = ConsoleColor.Green;
             Console.Write("Press enter to return to the main menu...");
             Console.ForegroundColor = ConsoleColor.Gray;
