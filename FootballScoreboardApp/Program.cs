@@ -81,29 +81,5 @@ namespace FootballScoreboardApp
             Console.ReadLine();
             Environment.Exit(0);
         }
-
-
-        ///// How to access a local JSON file/////
-        //static void Main(string[] args)
-        //{
-        //    // Path to the JSON file
-        //    string filePath = "scoreboard.json";
-
-        //    // Read the entire content of the JSON file into a string
-        //    var json = File.ReadAllText(filePath);
-
-        //    // Parse the JSON string into a JObject
-        //    var data = JObject.Parse(json);
-
-        //    var events = data["events"] as JArray;
-
-        //    foreach (var item in events)
-        //    {
-        //        var name = item["name"]?.ToString();
-        //        Console.WriteLine(name);
-        //    }
-
-
-        //}
     }
 }
