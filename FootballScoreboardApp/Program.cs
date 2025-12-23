@@ -1,5 +1,5 @@
 ﻿using ConsoleTables;
-using FootballScoreboardApp.DataStructure;
+using FootballScoreboardApp;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net;
@@ -10,7 +10,7 @@ namespace FootballScoreboardApp
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             //Main Menu
             Console.ForegroundColor = ConsoleColor.White;
@@ -36,13 +36,13 @@ namespace FootballScoreboardApp
                     switch (choice)
                     {
                         case 1:
-                            ShowScores(Urls.NFL);
+                            await ShowScores(Urls.NFL);
                             break;
                         case 2:
-                            ShowScores(Urls.NBA);
+                            await ShowScores(Urls.NBA);
                             break;
                         case 3:
-                            ShowScores(Urls.LALIGA);
+                            await ShowScores(Urls.LALIGA);
                             break;
                         case 4:
                             Exit();
@@ -65,12 +65,12 @@ namespace FootballScoreboardApp
             } while (true);
         }
 
-        public static void ShowScores(string url)
+        public static async Task ShowScores(string url)
         {
-            API.GetScores(url);
-            
+            await API.GetScores(url);
+
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write("Press enter to return to the main menu...");
+            Console.WriteLine("Press Enter to return to the main menu...");
             Console.ForegroundColor = ConsoleColor.Gray;
             Console.ReadLine();
         }
